@@ -1,39 +1,61 @@
 import { useState } from 'react'
 
 function App() {
+  return (
+    <>
+      <InputLineComponent/>
+    </>
+  )
+}
+
+function InputLineComponent(){
   const [storedLines, setStoredLines] = useState(
     [
       {
-        line : "go to gym"
-      },
-      {
-        line : "Study for 4 hours."
-      },
-      {
-        line : "write something..."
+        line : "this is my first todo"
       }
     ]
   )
 
+  const fontSize = "12px"
+
   function handleKeyDown(event){
     if(event.key === 'Enter'){
-      //Want to creat a new input field same as current
-
+      event.preventDefault()
       setStoredLines([...storedLines, {
-        line : "write something..."
-      }])
-
-      console.log(storedLines);
-
+        line : ""
+      }])    
     }
   }
-  
+
+  function handleOnClick(event){
+    console.log(event);
+  }
+
   return (
     <>
       {
-        storedLines.map(lines => 
+        storedLines.map( (lines, index) => 
           <div>
-            <input onKeyDown={handleKeyDown} defaultValue={lines.line} style={{backgroundColor : "#111111", color:"white", border:"none"}}/>
+            <textarea 
+              className='textArea'
+              key={index} 
+              type='text'
+              onKeyDown={handleKeyDown} 
+              onClick={handleOnClick}
+              defaultValue={lines.line} 
+              placeholder='write something...' 
+              style={{
+                backgroundColor : "#111111", 
+                color:"white", 
+                border:"none",
+                outline: "none",
+                resize :"none",
+                height: "17px",
+                fontSize : "14px",
+                width : "700px"
+              }}
+            />
           </div>
         )
       }
