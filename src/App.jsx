@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
 }
 
 function InputLineComponent(){
+  const inputRef = useRef();
   const [storedLines, setStoredLines] = useState(
     [
       {
@@ -26,7 +27,12 @@ function InputLineComponent(){
         line : ""
       }])    
     }
+    inputRef.current.placeholder = ''
   }
+
+  useEffect(()=>{
+    inputRef.current.focus();
+  }, [storedLines])
 
   function handleOnClick(event){
     console.log(event);
@@ -37,13 +43,14 @@ function InputLineComponent(){
       {
         storedLines.map( (lines, index) => 
           <div>
-            <textarea 
+            <div
+              contentEditable='true'
+              ref={inputRef}
               className='textArea'
               key={index} 
               type='text'
               onKeyDown={handleKeyDown} 
               onClick={handleOnClick}
-              defaultValue={lines.line} 
               placeholder='write something...' 
               style={{
                 backgroundColor : "#111111", 
@@ -55,7 +62,7 @@ function InputLineComponent(){
                 fontSize : "14px",
                 width : "700px"
               }}
-            />
+            >{lines.line}</div>
           </div>
         )
       }
