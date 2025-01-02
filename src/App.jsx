@@ -1,73 +1,72 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
+import './App.css';
 
 function App() {
   return (
     <>
-      <InputLineComponent/>
+      <InputLineComponent />
     </>
-  )
+  );
 }
 
-function InputLineComponent(){
-  const inputRef = useRef();
-  const [storedLines, setStoredLines] = useState(
-    [
-      {
-        line : "this is my first todo"
-      }
-    ]
-  )
+function InputLineComponent() {
+  const inputRefs = useRef([]); 
+  const [storedLines, setStoredLines] = useState([
+    {
+      blockId: 1,
+      line: 'this is my first todo',
+    },
+  ]);
 
-  const fontSize = "12px"
+  function handleKeyDown(event, index) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const newStoredLines = [...storedLines];
+      newStoredLines.splice(index + 1, 0, {
+        blockId: storedLines.length + 1,
+        line: '',
+      });
 
-  function handleKeyDown(event){
-    if(event.key === 'Enter'){
-      event.preventDefault()
-      setStoredLines([...storedLines, {
-        line : ""
-      }])    
+      setStoredLines(newStoredLines);
+
+      setTimeout(() => {
+        inputRefs.current[index + 1]?.focus();
+      }, 0);
     }
-    inputRef.current.placeholder = ''
   }
 
-  useEffect(()=>{
-    inputRef.current.focus();
-  }, [storedLines])
-
-  function handleOnClick(event){
-    console.log(event);
-  }
+  useEffect(() => {
+    if (inputRefs.current.length === storedLines.length) {
+      inputRefs.current[storedLines.length - 1]?.focus();
+    }
+  }, [storedLines]);
 
   return (
     <>
-      {
-        storedLines.map( (lines, index) => 
-          <div>
-            <div
-              contentEditable='true'
-              ref={inputRef}
-              className='textArea'
-              key={index} 
-              type='text'
-              onKeyDown={handleKeyDown} 
-              onClick={handleOnClick}
-              placeholder='write something...' 
-              style={{
-                backgroundColor : "#111111", 
-                color:"white", 
-                border:"none",
-                outline: "none",
-                resize :"none",
-                height: "17px",
-                fontSize : "14px",
-                width : "700px"
-              }}
-            >{lines.line}</div>
-          </div>
-        )
-      }
+      {storedLines.map((line, index) => (
+        <div
+          contentEditable="true"
+          suppressContentEditableWarning="true"
+          ref={(el) => (inputRefs.current[index] = el)} // Assign ref
+          key={line.blockId}
+          id={line.blockId}
+          onKeyDown={(event) => handleKeyDown(event, index)}
+          placeholder="write something..."
+          style={{
+            backgroundColor: '#111111',
+            color: 'white',
+            height: '17px',
+            fontSize: '14px',
+            width: '700px',
+            border: 'none',
+            outline: 'none',
+          }}
+        >
+          {line.line}
+        </div>
+      ))}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
